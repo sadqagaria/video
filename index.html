@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#09111f" />
+  <meta name="description" content="تحسين الفيديو داخل الهاتف بدون سيرفر بدقات 480p و720p و1080p" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>محسّن الفيديو HD</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">HD+</div>
+        <div>
+          <h1>محسّن الفيديو</h1>
+          <p>تحسين داخل الهاتف — بدون سيرفر</p>
+        </div>
+      </div>
+      <button id="installBtn" class="install-btn hidden" type="button">تثبيت التطبيق</button>
+    </header>
+
+    <section class="privacy-strip">
+      <span class="privacy-icon">🔒</span>
+      <div><strong>خصوصية كاملة</strong><small>الفيديو يُعالج داخل هاتفك ولا يتم رفعه لأي سيرفر.</small></div>
+    </section>
+
+    <section class="card upload-card">
+      <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="اختيار فيديو">
+        <input id="videoInput" type="file" accept="video/*" hidden />
+        <div class="upload-icon">＋</div>
+        <h2>اختر فيديو من الهاتف</h2>
+        <p>يفضّل فيديو أقل من 60 ثانية وحجمه أقل من 100MB</p>
+        <button id="chooseBtn" class="primary-btn" type="button">رفع الفيديو</button>
+      </div>
+
+      <div id="fileSummary" class="file-summary hidden">
+        <div class="preview-wrap">
+          <video id="sourcePreview" controls playsinline preload="metadata"></video>
+          <span class="badge">قبل التحسين</span>
+        </div>
+        <div class="meta-grid">
+          <div><span>اسم الملف</span><strong id="fileName">—</strong></div>
+          <div><span>الحجم</span><strong id="fileSize">—</strong></div>
+          <div><span>الدقة</span><strong id="sourceResolution">—</strong></div>
+          <div><span>المدة</span><strong id="sourceDuration">—</strong></div>
+        </div>
+        <button id="removeFileBtn" class="text-btn danger" type="button">إزالة الفيديو</button>
+      </div>
+    </section>
+
+    <section id="optionsCard" class="card hidden">
+      <div class="section-head">
+        <h2>اختر دقة التصدير</h2>
+        <p>720p هو الاختيار الأنسب لمعظم الهواتف.</p>
+      </div>
+
+      <div id="resolutionGrid" class="resolution-grid">
+        <button class="option-card resolution" data-resolution="480" type="button">
+          <span class="option-icon">SD</span><strong>480p</strong><small>أسرع وأقل حجمًا</small>
+        </button>
+        <button class="option-card resolution active recommended" data-resolution="720" type="button">
+          <span class="recommend-label">مقترح</span><span class="option-icon">HD</span><strong>720p</strong><small>جودة وسرعة متوازنة</small>
+        </button>
+        <button class="option-card resolution" data-resolution="1080" type="button">
+          <span class="option-icon">FHD</span><strong>1080p</strong><small>أوضح ويحتاج هاتفًا قويًا</small>
+        </button>
+      </div>
+
+      <h3 class="subheading">مقاس واتجاه الفيديو</h3>
+      <div id="aspectGrid" class="aspect-grid">
+        <button class="mini-card aspect active" data-aspect="auto" type="button"><strong>تلقائي</strong><span id="autoSizeLabel">حسب اتجاه الفيديو</span></button>
+        <button class="mini-card aspect" data-aspect="landscape" type="button"><strong>أفقي 16:9</strong><span id="landscapeSizeLabel">1280 × 720</span></button>
+        <button class="mini-card aspect" data-aspect="portrait" type="button"><strong>رأسي 9:16</strong><span id="portraitSizeLabel">720 × 1280</span></button>
+        <button class="mini-card aspect" data-aspect="square" type="button"><strong>مربع 1:1</strong><span id="squareSizeLabel">720 × 720</span></button>
+        <button class="mini-card aspect" data-aspect="portrait45" type="button"><strong>منشور 4:5</strong><span id="portrait45SizeLabel">720 × 900</span></button>
+        <button class="mini-card aspect" data-aspect="original" type="button"><strong>نفس الأبعاد</strong><span id="originalSizeLabel">يحافظ على النسبة الأصلية</span></button>
+      </div>
+
+      <h3 class="subheading">طريقة ملء المقاس</h3>
+      <div id="fitGrid" class="fit-grid">
+        <label class="radio-card"><input type="radio" name="fitMode" value="fit" checked /><span><strong>بدون قص</strong><small>الفيديو كامل مع حواف عند الحاجة</small></span></label>
+        <label class="radio-card"><input type="radio" name="fitMode" value="fill" /><span><strong>ملء الشاشة</strong><small>قص بسيط من الأطراف بدون تشويه</small></span></label>
+        <label class="radio-card"><input type="radio" name="fitMode" value="blur" /><span><strong>خلفية ضبابية</strong><small>الفيديو كامل مع خلفية من المشهد</small></span></label>
+      </div>
+
+      <h3 class="subheading">درجة التحسين</h3>
+      <div id="enhancementGrid" class="enhancement-grid">
+        <button class="enhance-level" data-level="light" type="button">
+          <span class="level-number">1</span><div><strong>تحسين خفيف</strong><small>تعديل بسيط للألوان والوضوح — أسرع معالجة</small></div>
+        </button>
+        <button class="enhance-level active" data-level="balanced" type="button">
+          <span class="level-number">2</span><div><strong>تحسين متوازن</strong><small>تنقية ووضوح وألوان متوازنة — مناسب لمعظم الفيديوهات</small></div>
+        </button>
+        <button class="enhance-level strong-level" data-level="strong" type="button">
+          <span class="level-number">3</span><div><strong>تحسين قوي</strong><small>أعلى درجة تنقية، وضوح ونصاعة أقوى، وتحسين أكبر للتفاصيل — شكل «جودة فائقة»</small></div>
+        </button>
+      </div>
+
+      <div id="outputSummary" class="output-summary">
+        <span>النتيجة المتوقعة</span>
+        <strong id="outputResolution">1280 × 720 — تحسين متوازن</strong>
+      </div>
+
+      <div id="deviceWarning" class="message warning hidden"></div>
+      <div class="features">
+        <span>✓ إزالة البهتان</span><span>✓ تقليل التشويش</span><span>✓ تحسين الألوان</span><span>✓ زيادة الحدة</span><span>✓ الحفاظ على الصوت</span>
+      </div>
+
+      <button id="enhanceBtn" class="primary-btn large" type="button">ابدأ تحسين الفيديو</button>
+      <p id="validationMessage" class="message error hidden"></p>
+    </section>
+
+    <section id="progressCard" class="card progress-card hidden" aria-live="polite">
+      <div class="processing-orb"><span></span></div>
+      <h2 id="progressTitle">جاري تجهيز محرك التحسين…</h2>
+      <p id="progressMessage">أول تشغيل يحتاج تنزيل محرك بحجم يقارب 25MB.</p>
+      <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+      <strong id="progressPercent">0%</strong>
+      <div class="steps">
+        <span id="stepEngine">تجهيز المحرك</span><span id="stepEnhance">التحسين</span><span id="stepExport">التصدير</span>
+      </div>
+      <button id="cancelBtn" class="secondary-btn cancel-btn" type="button">إلغاء العملية</button>
+    </section>
+
+    <section id="resultCard" class="card result-card hidden">
+      <div class="success-icon">✓</div>
+      <h2>تم تحسين الفيديو بنجاح</h2>
+      <p id="resultDescription">النسخة المحسّنة جاهزة للحفظ على الهاتف.</p>
+      <div class="preview-wrap result-preview">
+        <video id="resultPreview" controls playsinline preload="metadata"></video>
+        <span class="badge success">بعد التحسين</span>
+      </div>
+      <div class="result-actions">
+        <a id="downloadBtn" class="primary-btn large" href="#" download>تحميل الفيديو</a>
+        <button id="shareBtn" class="secondary-btn hidden" type="button">مشاركة / حفظ</button>
+        <button id="newVideoBtn" class="secondary-btn" type="button">تحسين فيديو آخر</button>
+      </div>
+    </section>
+
+    <footer>
+      <span>المعالجة تتم داخل المتصفح</span>
+      <span>480p • 720p • 1080p</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

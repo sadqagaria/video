@@ -1,4 +1,4 @@
-name: Mubasher - Android APK v1.4
+name: Mubasher - Android APK v1.5
 on:
   push:
     branches:
@@ -24,15 +24,24 @@ jobs:
           xz -dc Mubasher-update-1.4.patch.xz > /tmp/mubasher-1.4.patch
           git apply --check /tmp/mubasher-1.4.patch
           git apply /tmp/mubasher-1.4.patch
-      - name: Assert all nine visible category buttons
+      - name: Apply v1.5 verified Maspero terrestrial channels
+        run: |
+          xz -dc Mubasher-update-1.5.patch.xz > /tmp/mubasher-1.5.patch
+          git apply --check /tmp/mubasher-1.5.patch
+          git apply /tmp/mubasher-1.5.patch
+      - name: Assert ten visible category buttons and two Maspero channels
         run: |
           python3 - <<'PY'
           from xml.etree import ElementTree as ET
+          from pathlib import Path
           tree = ET.parse('Mubasher/app/src/main/res/layout/home_screen.xml')
           ids = [node.attrib.get('{http://schemas.android.com/apk/res/android}id','')
                  for node in tree.getroot().iter()]
-          assert sum(i.startswith('@+id/cat') for i in ids) == 9
-          print('Verified 9 first-screen clickable category buttons')
+          assert sum(i.startswith('@+id/cat') for i in ids) == 10
+          content = Path('Mubasher/app/src/main/java/com/mubasher/tv/OfficialTerrestrialChannels.kt').read_text()
+          assert 'x856hbh' in content and 'x8n6dm7' in content
+          assert 'TimeSport' not in content
+          print('10 sections and 2 verified Maspero publisher pages')
           PY
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -64,7 +73,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Mubasher-v1.4-debug-apk
+          name: Mubasher-v1.5-debug-apk
           path: Mubasher/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30

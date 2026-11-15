@@ -1,7 +1,3 @@
-# Mubasher 1.3 - Android/Android TV
+# Mubasher Android TV (v1.5)
 
-Isolated build branch. No change to main. Includes 9 browsing categories, bitrate/resolution limits and audio booster up to 200% (device support permitting), bundled public IPTV stream catalog up to 2500 entries, official Nilesat channel directory link.
-
-Open GitHub Actions > Mubasher - Android APK > latest successful run > Artifacts > Mubasher-1.3-debug-apk.
-
-These are public Internet stream listings; NOT 1500 verified Nilesat satellite channels. Stream availability/rights not guaranteed. The APK is a debug build for local installation.
+The isolated build branch. Workflow applies source patches 1.3, 1.4, 1.5 to original buildable Android source, tests and builds a debug APK. Ten first-screen categories including `القنوات الأرضية المصرية`. Verified Maspero official publisher pages for Egyptian Channel One and Channel Two; no verified official Time Sport terrestrial internet stream. Provider's official Dailymotion player used with browser fallback. No changes to main branch.

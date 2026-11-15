@@ -14,6 +14,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: Extract Mubasher Android project
         run: tar -xzf Mubasher-source.tar.gz
+      - name: Fix Kotlin type inference in adapter initialization
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('Mubasher/app/src/main/java/com/mubasher/tv/MainActivity.kt')
+          s = p.read_text(encoding='utf-8')
+          before = 'private val adapter = ChannelAdapter { position ->'
+          after = 'private val adapter: ChannelAdapter = ChannelAdapter { position: Int ->'
+          assert s.count(before) == 1, 'Unexpected MainActivity source; refusing blind patch'
+          p.write_text(s.replace(before, after), encoding='utf-8')
+          PY
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:

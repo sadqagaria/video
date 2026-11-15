@@ -24,9 +24,9 @@ jobs:
           after = 'private val adapter: ChannelAdapter by lazy { ChannelAdapter { position: Int ->'
           assert s.count(before) == 1, 'Adapter initialization unexpectedly changed'
           s = s.replace(before, after, 1)
-          end = '            playChannel(visible[position])\\n        }\\n    }\\n    private val handler'
+          end = '            playChannel(visible[position])\n        }\n    }\n    private val handler'
           assert s.count(end) == 1, 'Adapter block ending unexpectedly changed'
-          s = s.replace(end, '            playChannel(visible[position])\\n        }\\n    } }\\n    private val handler', 1)
+          s = s.replace(end, '            playChannel(visible[position])\n        }\n    } }\n    private val handler', 1)
           p.write_text(s, encoding='utf-8')
           PY
       - name: Set up Java 17

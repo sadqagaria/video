@@ -12,29 +12,14 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Extract Mubasher Android project
+      - name: Extract Mubasher 1.3
         run: tar -xzf Mubasher-source.tar.gz
-      - name: Fix Kotlin type inference in adapter initialization
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('Mubasher/app/src/main/java/com/mubasher/tv/MainActivity.kt')
-          s = p.read_text(encoding='utf-8')
-          before = 'private val adapter = ChannelAdapter { position ->'
-          after = 'private val adapter: ChannelAdapter by lazy { ChannelAdapter { position: Int ->'
-          assert s.count(before) == 1, 'Adapter initialization unexpectedly changed'
-          s = s.replace(before, after, 1)
-          end = '            playChannel(visible[position])\n        }\n    }\n    private val handler'
-          assert s.count(end) == 1, 'Adapter block ending unexpectedly changed'
-          s = s.replace(end, '            playChannel(visible[position])\n        }\n    } }\n    private val handler', 1)
-          p.write_text(s, encoding='utf-8')
-          PY
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Set up Android SDK without deprecated tools package
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
           packages: platform-tools
@@ -42,21 +27,24 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.4'
-      - name: Android platform 34
+      - name: Install Android platform
         run: sdkmanager --install "platforms;android-34" "build-tools;34.0.0"
-      - name: Verify playlist builder tests
+      - name: Test playlist catalog
         working-directory: Mubasher
         run: python3 -m unittest discover -s tests -v
-      - name: Refresh current public IPTV channels
+      - name: Refresh public streams (Arabic first, global categories)
         working-directory: Mubasher
         run: python3 tools/refresh_channels.py
-      - name: Assemble installable debug APK
+      - name: Count real source listings
         working-directory: Mubasher
-        run: gradle --no-daemon :app:assembleDebug
-      - name: Upload downloadable APK
+        run: grep -c '^#EXTINF:' app/src/main/assets/channels.m3u
+      - name: Run Kotlin category tests and assemble debug APK
+        working-directory: Mubasher
+        run: gradle --no-daemon :app:testDebugUnitTest :app:assembleDebug
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Mubasher-debug-apk
+          name: Mubasher-1.3-debug-apk
           path: Mubasher/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30

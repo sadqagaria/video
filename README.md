@@ -1,31 +1,9 @@
-# محسن الفيديو للموبايل — بدون سيرفر
+# Mubasher Android TV APK build branch
 
-نسخة HTML/PWA تعمل داخل متصفح الهاتف باستخدام FFmpeg WebAssembly. لا يوجد Backend ولا Render، ولا يتم رفع الفيديو إلى أي سيرفر.
+This is an isolated build branch on the owner's GitHub, created for the Mubasher Android TV project. The `main` branch of this repository has not been changed.
 
-## الوظائف
+## Downloading
 
-- تصدير 480p و720p و1080p.
-- تلقائي، أفقي 16:9، رأسي 9:16، مربع 1:1، منشور 4:5، أو نفس النسبة الأصلية.
-- بدون قص، ملء الشاشة، أو خلفية ضبابية.
-- تحسين خفيف، متوازن، وقوي.
-- إزالة البهتان، تحسين الألوان، تقليل التشويش، زيادة الحدة، والحفاظ على الصوت.
-- تحميل أو مشاركة الفيديو النهائي من الهاتف.
+Open **Actions → Mubasher - Android APK**, select the latest successful run, and download artifact `Mubasher-debug-apk`. Unzip it to obtain `app-debug.apk`.
 
-## رفعه مكان النسخة الحالية على GitHub
-
-1. فك ضغط الملف.
-2. افتح مستودع `ehacevideo` على GitHub.
-3. احذف ملفات النسخة القديمة، خصوصًا مجلدي `frontend` و`backend` وملف `render.yaml` إن وُجدت.
-4. ارفع **كل الملفات الموجودة داخل هذا المجلد إلى جذر المستودع**، بحيث يكون `index.html` ظاهرًا مباشرة في الصفحة الرئيسية للمستودع.
-5. اضغط Commit changes.
-6. انتظر دقيقة أو دقيقتين ثم افتح:
-   `https://sadqagaria.github.io/ehacevideo/`
-7. افتح Chrome menu ثم اختر Add to Home screen أو Install app.
-
-## ملاحظات الاستخدام
-
-- أول ضغطة على التحسين تنزّل محرك FFmpeg بحجم يقارب 25MB من jsDelivr.
-- ابدأ بفيديو 5–15 ثانية ودقة 720p للتجربة.
-- 1080p والتحسين القوي يستهلكان ذاكرة وطاقة أكبر وقد يفشلان على الهواتف الضعيفة أو مع الفيديو الطويل.
-- الحد الحالي: 100MB و60 ثانية لحماية ذاكرة الهاتف.
-- هذه معالجة فلاتر وUpscale تقليدي وليست استعادة تفاصيل AI حقيقية.
+The `Mubasher-source.tar.gz` archive contains the full Android Studio source tree (including the streaming playlist refresh script).

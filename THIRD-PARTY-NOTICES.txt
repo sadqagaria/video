@@ -1,3 +1,0 @@
-This application loads @ffmpeg/core 0.12.10 at runtime from jsDelivr.
-FFmpeg and ffmpeg.wasm are third-party open-source projects and retain their respective licenses.
-Project: https://github.com/ffmpegwasm/ffmpeg.wasm

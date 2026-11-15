@@ -20,22 +20,14 @@ jobs:
           from pathlib import Path
           p = Path('Mubasher/app/src/main/java/com/mubasher/tv/MainActivity.kt')
           s = p.read_text(encoding='utf-8')
-          before = """    private val adapter = ChannelAdapter { position ->
-        if (position in visible.indices) {
-            adapter.selected = position
-            playChannel(visible[position])
-        }
-    }"""
-          after = """    private val adapter: ChannelAdapter by lazy {
-        ChannelAdapter { position: Int ->
-            if (position in visible.indices) {
-                adapter.selected = position
-                playChannel(visible[position])
-            }
-        }
-    }"""
-          assert s.count(before) == 1, 'Unexpected MainActivity source; refusing blind patch'
-          p.write_text(s.replace(before, after), encoding='utf-8')
+          before = 'private val adapter = ChannelAdapter { position ->'
+          after = 'private val adapter: ChannelAdapter by lazy { ChannelAdapter { position: Int ->'
+          assert s.count(before) == 1, 'Adapter initialization unexpectedly changed'
+          s = s.replace(before, after, 1)
+          end = '            playChannel(visible[position])\\n        }\\n    }\\n    private val handler'
+          assert s.count(end) == 1, 'Adapter block ending unexpectedly changed'
+          s = s.replace(end, '            playChannel(visible[position])\\n        }\\n    } }\\n    private val handler', 1)
+          p.write_text(s, encoding='utf-8')
           PY
       - name: Set up Java 17
         uses: actions/setup-java@v4
